@@ -22,11 +22,16 @@ public class DB {
             try{
                 Properties props = loadProperties();
                 String url = props.getProperty("dburl");
-                connection = DriverManager.getConnection(url, props);
+                // Pega usuário e senha
+                String user = props.getProperty("user"); 
+                String password = props.getProperty("password");
+                
+                // Estabelece a conexão com URL, Usuário e Senha
+                connection = DriverManager.getConnection(url, user, password);
             }
             catch (SQLException e){
                 // SQLException -- Exception
-                throw new DBException(e.getMessage());
+                throw new DBException("Erro ao conectar ao BD: " + e.getMessage());
             }
         }
         return connection;
@@ -50,7 +55,7 @@ public class DB {
             return properties;
         }
         catch (IOException e){
-            throw new DBException(e.getMessage());
+            throw new DBException("Não foi possível carregar o arquivo db.properties: " + e.getMessage());
         }
     }
 
