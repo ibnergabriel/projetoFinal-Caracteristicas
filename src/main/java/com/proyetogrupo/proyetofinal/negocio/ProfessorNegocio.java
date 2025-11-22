@@ -8,6 +8,6 @@ package com.proyetogrupo.proyetofinal.negocio;
  *
  * @author luccas? ok!
  */
-public class FuncionarioNegocio {
+public class ProfessorNegocio {
 
 }
