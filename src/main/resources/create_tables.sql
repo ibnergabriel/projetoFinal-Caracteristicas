@@ -1,3 +1,4 @@
+-- CREATE Proyeto;
 USE Proyeto;
 
 CREATE TABLE Aluno(
