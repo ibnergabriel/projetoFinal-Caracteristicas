@@ -8,7 +8,7 @@
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!--Pedro usa a versao 21 - configurar sempre-->
+        <!--Pedro usa a versao 21 o grupo 25- configurar sempre-->
         <maven.compiler.release>25</maven.compiler.release>
         <exec.mainClass>com.proyetogrupo.proyetofinal.ProyetoFinal</exec.mainClass>
         <mysql.connector.version>8.0.33</mysql.connector.version>
@@ -28,7 +28,11 @@
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
-        
+        <dependency>
+            <groupId>unknown.binary</groupId>
+            <artifactId>AbsoluteLayout</artifactId>
+            <version>SNAPSHOT</version>
+        </dependency>
     </dependencies>
     
     <build>
@@ -43,4 +47,11 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <id>unknown-jars-temp-repo</id>
+            <name>A temporary repository created by NetBeans for libraries and jars it could not identify. Please replace the dependencies in this repository with correct ones and delete this repository.</name>
+            <url>file:${project.basedir}/lib</url>
+        </repository>
+    </repositories>
 </project>
