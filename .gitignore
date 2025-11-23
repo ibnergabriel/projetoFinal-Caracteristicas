@@ -2,3 +2,5 @@ target/
 /.mvn/
 /mvnw
 /mvnw.cmd
+#arquivo de configuração de ambiente local e senhas com servidor sql
+db.properties
