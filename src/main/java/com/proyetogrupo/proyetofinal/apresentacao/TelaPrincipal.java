@@ -29,14 +29,14 @@ public class TelaPrincipal extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
+        jDesktopPane1 = new javax.swing.JDesktopPane();
         jPanelMenu = new javax.swing.JPanel();
         btnPagamento = new javax.swing.JButton();
         btnTreinosInativos = new javax.swing.JButton();
         btnTreinos = new javax.swing.JButton();
         btnTreinosAtivos = new javax.swing.JButton();
-        jDesktopPane1 = new javax.swing.JDesktopPane();
+        jButton1 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuCadastro = new javax.swing.JMenu();
         menuItemAluno = new javax.swing.JMenuItem();
@@ -54,31 +54,42 @@ public class TelaPrincipal extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setForeground(java.awt.Color.white);
         setPreferredSize(new java.awt.Dimension(1000, 430));
-        getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        jDesktopPane1.setPreferredSize(new java.awt.Dimension(800, 400));
 
         jPanelMenu.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder(""), "Menu Rapido", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 13))); // NOI18N
 
         btnPagamento.setText("Controle de Pagamento");
+        btnPagamento.addActionListener(this::btnPagamentoActionPerformed);
 
         btnTreinosInativos.setText("Treinos Ativos");
 
         btnTreinos.setText("Gerenciar Treinos");
+        btnTreinos.addActionListener(this::btnTreinosActionPerformed);
 
         btnTreinosAtivos.setText("Treinos Inativos");
+
+        jButton1.setText("Sair do App");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
 
         javax.swing.GroupLayout jPanelMenuLayout = new javax.swing.GroupLayout(jPanelMenu);
         jPanelMenu.setLayout(jPanelMenuLayout);
         jPanelMenuLayout.setHorizontalGroup(
             jPanelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelMenuLayout.createSequentialGroup()
-                .addGap(27, 27, 27)
                 .addGroup(jPanelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnTreinosAtivos, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(64, 64, 64)
-                .addGroup(jPanelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnTreinosInativos, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnTreinos, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanelMenuLayout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addGroup(jPanelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnTreinosAtivos, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(64, 64, 64)
+                        .addGroup(jPanelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnTreinosInativos, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnTreinos, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanelMenuLayout.createSequentialGroup()
+                        .addGap(209, 209, 209)
+                        .addComponent(jButton1)))
                 .addGap(21, 21, 21))
         );
         jPanelMenuLayout.setVerticalGroup(
@@ -88,37 +99,40 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnPagamento)
                     .addComponent(btnTreinos))
-                .addGap(97, 97, 97)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, Short.MAX_VALUE)
                 .addGroup(jPanelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnTreinosAtivos)
                     .addComponent(btnTreinosInativos))
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
+                .addGap(11, 11, 11))
         );
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipady = 24;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(136, 271, 273, 302);
-        getContentPane().add(jPanelMenu, gridBagConstraints);
+        jDesktopPane1.setLayer(jPanelMenu, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
         jDesktopPane1.setLayout(jDesktopPane1Layout);
         jDesktopPane1Layout.setHorizontalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(jDesktopPane1Layout.createSequentialGroup()
+                .addGap(270, 270, 270)
+                .addComponent(jPanelMenu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(303, Short.MAX_VALUE))
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
+                .addContainerGap(149, Short.MAX_VALUE)
+                .addComponent(jPanelMenu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
-        getContentPane().add(jDesktopPane1, new java.awt.GridBagConstraints());
+        getContentPane().add(jDesktopPane1, java.awt.BorderLayout.PAGE_START);
 
         menuCadastro.setText("Cadastros");
 
         menuItemAluno.setText("Aluno");
+        menuItemAluno.addActionListener(this::menuItemAlunoActionPerformed);
         menuCadastro.add(menuItemAluno);
 
         menuItemProfessor.setText("Professor");
@@ -167,7 +181,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void menuItemPagamentosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemPagamentosActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_menuItemPagamentosActionPerformed
 
     private void menuItemTreinosAtivosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTreinosAtivosActionPerformed
@@ -192,6 +206,38 @@ public class TelaPrincipal extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_menuItemSairActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+            int opc = JOptionPane.showConfirmDialog(
+            this,
+            "Deseja realmente sair?",
+            "Confirmar saída",
+            JOptionPane.YES_NO_OPTION
+        );
+
+        if (opc == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btnPagamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagamentoActionPerformed
+        // TODO add your handling code here:
+        TelaPagamentos tela = new TelaPagamentos(); // cria a nova janela
+        tela.setLocationRelativeTo(null);           // centraliza
+        tela.setVisible(true);                      // exibe a janela
+    }//GEN-LAST:event_btnPagamentoActionPerformed
+
+    private void btnTreinosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTreinosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnTreinosActionPerformed
+
+    private void menuItemAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAlunoActionPerformed
+        // TODO add your handling code here:
+        TelaCadastroAluno aluno = new TelaCadastroAluno(); // cria a nova janela
+        aluno.setLocationRelativeTo(null);           // centraliza
+        aluno.setVisible(true);
+    }//GEN-LAST:event_menuItemAlunoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -223,6 +269,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton btnTreinos;
     private javax.swing.JButton btnTreinosAtivos;
     private javax.swing.JButton btnTreinosInativos;
+    private javax.swing.JButton jButton1;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
