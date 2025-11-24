@@ -112,7 +112,7 @@ public class TelaCadastroProfessor extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jDesktopPane1.setPreferredSize(new java.awt.Dimension(1000, 506));
 

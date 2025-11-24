@@ -80,11 +80,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
         btnPagamento.addActionListener(this::btnPagamentoActionPerformed);
 
         btnTreinosInativos.setText("Treinos Ativos");
+        btnTreinosInativos.addActionListener(this::btnTreinosInativosActionPerformed);
 
         btnTreinos.setText("Gerenciar Treinos");
         btnTreinos.addActionListener(this::btnTreinosActionPerformed);
 
         btnTreinosAtivos.setText("Treinos Inativos");
+        btnTreinosAtivos.addActionListener(this::btnTreinosAtivosActionPerformed);
 
         jButton1.setText("Sair do App");
         jButton1.addActionListener(this::jButton1ActionPerformed);
@@ -137,6 +139,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         menuCadastro.add(menuItemAluno);
 
         menuItemProfessor.setText("Professor");
+        menuItemProfessor.addActionListener(this::menuItemProfessorActionPerformed);
         menuCadastro.add(menuItemProfessor);
 
         jMenuBar1.add(menuCadastro);
@@ -144,6 +147,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         menuTreinos.setText("Treinos");
 
         menuItemTreinos.setText("Gerenciar Treinos");
+        menuItemTreinos.addActionListener(this::menuItemTreinosActionPerformed);
         menuTreinos.add(menuItemTreinos);
 
         jMenuBar1.add(menuTreinos);
@@ -163,6 +167,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         menuRelatorios.add(menuItemTreinosAtivos);
 
         menuItemTreinosInativos.setText("Treinos Inativos");
+        menuItemTreinosInativos.addActionListener(this::menuItemTreinosInativosActionPerformed);
         menuRelatorios.add(menuItemTreinosInativos);
 
         jMenuBar1.add(menuRelatorios);
@@ -185,11 +190,16 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void menuItemPagamentosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemPagamentosActionPerformed
-
+        TelaPagamentos tela = new TelaPagamentos(); // cria a nova janela
+        tela.setLocationRelativeTo(null);           // centraliza
+        tela.setVisible(true);
     }//GEN-LAST:event_menuItemPagamentosActionPerformed
 
     private void menuItemTreinosAtivosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTreinosAtivosActionPerformed
         // TODO add your handling code here:
+        TelaTreinosAtivos tela = new TelaTreinosAtivos(); // cria a nova janela
+        tela.setLocationRelativeTo(null);           // centraliza
+        tela.setVisible(true);
     }//GEN-LAST:event_menuItemTreinosAtivosActionPerformed
 
     private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu1ActionPerformed
@@ -234,6 +244,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void btnTreinosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTreinosActionPerformed
         // TODO add your handling code here:
+        TelaTreinos tela = new TelaTreinos(); // cria a nova janela
+        tela.setLocationRelativeTo(null);           // centraliza
+        tela.setVisible(true);
     }//GEN-LAST:event_btnTreinosActionPerformed
 
     private void menuItemAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAlunoActionPerformed
@@ -242,6 +255,41 @@ public class TelaPrincipal extends javax.swing.JFrame {
         aluno.setLocationRelativeTo(null);           // centraliza
         aluno.setVisible(true);
     }//GEN-LAST:event_menuItemAlunoActionPerformed
+
+    private void menuItemProfessorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemProfessorActionPerformed
+        // TODO add your handling code here:
+        TelaCadastroProfessor tela = new TelaCadastroProfessor(); // cria a nova janela
+        tela.setLocationRelativeTo(null);           // centraliza
+        tela.setVisible(true);
+    }//GEN-LAST:event_menuItemProfessorActionPerformed
+
+    private void menuItemTreinosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTreinosActionPerformed
+        // TODO add your handling code here:
+        TelaTreinos tela = new TelaTreinos(); // cria a nova janela
+        tela.setLocationRelativeTo(null);           // centraliza
+        tela.setVisible(true);
+    }//GEN-LAST:event_menuItemTreinosActionPerformed
+
+    private void menuItemTreinosInativosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTreinosInativosActionPerformed
+        // TODO add your handling code here:
+        TelaTreinosInativos tela = new TelaTreinosInativos(); // cria a nova janela
+        tela.setLocationRelativeTo(null);           // centraliza
+        tela.setVisible(true);
+    }//GEN-LAST:event_menuItemTreinosInativosActionPerformed
+
+    private void btnTreinosAtivosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTreinosAtivosActionPerformed
+        // TODO add your handling code here:
+        TelaTreinosInativos tela = new TelaTreinosInativos(); // cria a nova janela
+        tela.setLocationRelativeTo(null);           // centraliza
+        tela.setVisible(true);
+    }//GEN-LAST:event_btnTreinosAtivosActionPerformed
+
+    private void btnTreinosInativosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTreinosInativosActionPerformed
+        // TODO add your handling code here:
+        TelaTreinosAtivos tela = new TelaTreinosAtivos(); // cria a nova janela
+        tela.setLocationRelativeTo(null);           // centraliza
+        tela.setVisible(true);
+    }//GEN-LAST:event_btnTreinosInativosActionPerformed
 
     /**
      * @param args the command line arguments
