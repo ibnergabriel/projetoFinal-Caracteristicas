@@ -19,6 +19,24 @@ public class TelaPrincipal extends javax.swing.JFrame {
      */
     public TelaPrincipal() {
         initComponents();
+        jDesktopPane1.addComponentListener(new java.awt.event.ComponentAdapter() {
+             @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                centralizarMenu();
+            }
+        });
+
+        centralizarMenu(); 
+    }
+    
+    private void centralizarMenu() {
+        int x = (jDesktopPane1.getWidth() - jPanelMenu.getWidth()) / 2;
+        int y = (jDesktopPane1.getHeight() - jPanelMenu.getHeight()) / 2;
+
+        if (x < 0) x = 0;
+        if (y < 0) y = 0;
+
+        jPanelMenu.setLocation(x, y);
     }
 
     /**
@@ -52,7 +70,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         menuItemSair = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setForeground(java.awt.Color.white);
         setPreferredSize(new java.awt.Dimension(1000, 430));
 
         jDesktopPane1.setPreferredSize(new java.awt.Dimension(800, 400));
@@ -108,26 +125,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addGap(11, 11, 11))
         );
 
-        jDesktopPane1.setLayer(jPanelMenu, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jDesktopPane1.add(jPanelMenu);
+        jPanelMenu.setBounds(271, 182, 528, 245);
 
-        javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
-        jDesktopPane1.setLayout(jDesktopPane1Layout);
-        jDesktopPane1Layout.setHorizontalGroup(
-            jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                .addGap(270, 270, 270)
-                .addComponent(jPanelMenu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(303, Short.MAX_VALUE))
-        );
-        jDesktopPane1Layout.setVerticalGroup(
-            jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
-                .addContainerGap(149, Short.MAX_VALUE)
-                .addComponent(jPanelMenu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        getContentPane().add(jDesktopPane1, java.awt.BorderLayout.PAGE_START);
+        getContentPane().add(jDesktopPane1, java.awt.BorderLayout.CENTER);
 
         menuCadastro.setText("Cadastros");
 
@@ -176,6 +177,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenuBar1.add(jMenu1);
 
         setJMenuBar(jMenuBar1);
+
+        getAccessibleContext().setAccessibleName("Sistema Academia");
+        getAccessibleContext().setAccessibleDescription("");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
