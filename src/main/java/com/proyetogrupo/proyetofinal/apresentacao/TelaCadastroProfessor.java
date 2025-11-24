@@ -1,6 +1,6 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JInternalFrame.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.proyetogrupo.proyetofinal.apresentacao;
 
@@ -16,14 +16,63 @@ import java.awt.image.BufferedImage;
  *
  * @author pedro
  */
-public class TelaCadastroProfessor extends javax.swing.JInternalFrame {
+public class TelaCadastroProfessor extends javax.swing.JFrame {
+    
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaCadastroProfessor.class.getName());
 
     /**
-     * Creates new form TelaCadastroProfessor
+     * Creates new form TelaCadastroProfessor1
      */
     public TelaCadastroProfessor() {
         initComponents();
+
+        // usamos posição absoluta dentro do DesktopPane
+        jDesktopPane1.setLayout(null);
+
+        // centraliza na primeira vez
+        centralizarComponentes();
+
+        // sempre que redimensionar, recalcule
+        jDesktopPane1.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                centralizarComponentes();
+            }
+        });
     }
+    
+    private void centralizarComponentes() {
+    int gapHorizontal = 20;        // espaço entre jPanel1 e jPanel2
+    int gapTopo = 20;              // margem superior
+    int gapEntreTituloPainel = 20; // espaço entre o título e os painéis
+
+    // tamanhos preferidos dos componentes
+    java.awt.Dimension dTitulo = jLabel1.getPreferredSize();
+    java.awt.Dimension d1 = jPanel1.getPreferredSize();
+    java.awt.Dimension d2 = jPanel2.getPreferredSize();
+
+    int totalWidth = d1.width + gapHorizontal + d2.width;
+    int larguraDesktop = jDesktopPane1.getWidth();
+
+    // x de início do bloco (do jPanel1)
+    int xInicio = (larguraDesktop - totalWidth) / 2;
+    if (xInicio < 0) xInicio = 0;
+
+    // posição do título
+    int yTitulo = gapTopo;
+    int xTitulo = (larguraDesktop - dTitulo.width) / 2;
+    if (xTitulo < 0) xTitulo = 0;
+
+    // painéis abaixo do título
+    int yPaineis = yTitulo + dTitulo.height + gapEntreTituloPainel;
+
+    // aplica posições e tamanhos
+    jLabel1.setBounds(xTitulo, yTitulo, dTitulo.width, dTitulo.height);
+    jPanel1.setBounds(xInicio, yPaineis, d1.width, d1.height);
+    jPanel2.setBounds(xInicio + d1.width + gapHorizontal, yPaineis, d2.width, d2.height);
+}
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -36,8 +85,7 @@ public class TelaCadastroProfessor extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel10 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
+        jDesktopPane1 = new javax.swing.JDesktopPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -61,17 +109,12 @@ public class TelaCadastroProfessor extends javax.swing.JInternalFrame {
         txtCadSenha = new javax.swing.JPasswordField();
         btnEntrar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
 
-        jLabel10.setText("Nome Completo:");
-        jLabel10.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel13.setText("Novo Usuario");
-        jLabel13.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-
-        setClosable(true);
-        setIconifiable(true);
+        jDesktopPane1.setPreferredSize(new java.awt.Dimension(1000, 506));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados"));
 
@@ -237,7 +280,7 @@ public class TelaCadastroProfessor extends javax.swing.JInternalFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel7)
                             .addComponent(txtAlunoTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel12)
                             .addComponent(txtCadUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -248,44 +291,34 @@ public class TelaCadastroProfessor extends javax.swing.JInternalFrame {
                         .addGap(24, 24, 24))))
         );
 
+        jDesktopPane1.add(jPanel1);
+        jPanel1.setBounds(16, 71, 735, 393);
+
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setText("Cadastro de Professores");
+        jDesktopPane1.add(jLabel1);
+        jLabel1.setBounds(495, 264, 248, 22);
 
         jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/professores.jpg"))); // NOI18N
+        jPanel2.add(jLabel11);
+
+        jDesktopPane1.add(jPanel2);
+        jPanel2.setBounds(763, 71, 582, 393);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(312, 312, 312)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
-                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(34, 34, 34))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(381, 381, 381)
-                .addComponent(jLabel8)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1393, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, Short.MAX_VALUE)
-                        .addComponent(jLabel8)
-                        .addContainerGap(14, Short.MAX_VALUE))))
+                .addContainerGap()
+                .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -342,15 +375,38 @@ public class TelaCadastroProfessor extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtProfNome1ActionPerformed
 
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> new TelaCadastroProfessor().setVisible(true));
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btUpload;
     private javax.swing.JButton btnEntrar;
+    private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -358,9 +414,9 @@ public class TelaCadastroProfessor extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel paFoto;
     private javax.swing.JRadioButton rbAlunoFeminino;
     private javax.swing.JRadioButton rbAlunoMasculino;
