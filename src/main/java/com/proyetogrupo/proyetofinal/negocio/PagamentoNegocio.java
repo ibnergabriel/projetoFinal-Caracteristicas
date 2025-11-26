@@ -4,10 +4,12 @@
  */
 package com.proyetogrupo.proyetofinal.negocio;
 
-/**
- *
- * @author luccas? ok!
- */
-public class PagamentoNegocio {
+import java.sql.SQLException;
+import java.util.List;
 
+import com.proyetogrupo.proyetofinal.negocio.model.Pagamento;
+
+public interface PagamentoNegocio {
+    void registrarPagamento(Pagamento pagamento) throws SQLException;
+    List<Pagamento> listarPorAluno(int idAluno) throws SQLException;
 }

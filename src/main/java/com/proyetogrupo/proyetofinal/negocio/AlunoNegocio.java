@@ -4,10 +4,14 @@
  */
 package com.proyetogrupo.proyetofinal.negocio;
 
-/**
- *
- * @author luccas? ok!
- */
-public class AlunoNegocio {
+import java.sql.SQLException;
+import java.util.Optional;
 
+import com.proyetogrupo.proyetofinal.negocio.model.Aluno;
+
+public interface AlunoNegocio {
+    Optional<Aluno> buscarPorId(Integer id) throws SQLException;
+    void cadastrarAluno(Aluno aluno) throws SQLException;
+    void atualizarAluno(Aluno aluno) throws SQLException;
+    void removerAluno(Integer id) throws SQLException;
 }
