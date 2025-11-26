@@ -15,12 +15,12 @@ public class ProfessorNegocioImpl implements ProfessorNegocio {
     private final ProfessorDAO dao;
     private final TreinoDAO treinoDAO;
 
-    // default constructor used by production code
+    
     public ProfessorNegocioImpl() {
         this(new ProfessorDAO(), new TreinoDAO());
     }
 
-    // constructor to be used in tests (mock injection)
+    
     public ProfessorNegocioImpl(ProfessorDAO dao, TreinoDAO treinoDAO) {
         this.dao = dao;
         this.treinoDAO = treinoDAO;

@@ -15,12 +15,12 @@ public class PagamentoNegocioImpl implements PagamentoNegocio {
     private final PagamentoDAO dao;
     private final AlunoDAO alunoDAO;
 
-    // Default constructor used in production
+    
     public PagamentoNegocioImpl() {
         this(new PagamentoDAO(), new AlunoDAO());
     }
 
-    // Constructor used in tests to inject mocks
+    
     public PagamentoNegocioImpl(PagamentoDAO dao, AlunoDAO alunoDAO) {
         this.dao = Objects.requireNonNull(dao, "PagamentoDAO must not be null");
         this.alunoDAO = Objects.requireNonNull(alunoDAO, "AlunoDAO must not be null");

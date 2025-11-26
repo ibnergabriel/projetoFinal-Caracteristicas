@@ -14,17 +14,14 @@ import com.proyetogrupo.proyetofinal.negocio.model.Treino;
 
 public class TreinoNegocioImpl implements TreinoNegocio {
 
-    // fields without inline initialization to allow constructor injection in tests
     private final TreinoDAO dao;
     private final AlunoDAO alunoDAO;
     private final ProfessorDAO professorDAO;
 
-    // default constructor (production)
     public TreinoNegocioImpl() {
         this(new TreinoDAO(), new AlunoDAO(), new ProfessorDAO());
     }
 
-    // constructor used by tests to inject mocks
     public TreinoNegocioImpl(TreinoDAO dao, AlunoDAO alunoDAO, ProfessorDAO professorDAO) {
         this.dao = dao;
         this.alunoDAO = alunoDAO;
