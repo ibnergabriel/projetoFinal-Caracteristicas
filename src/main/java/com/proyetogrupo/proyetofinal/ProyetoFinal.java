@@ -4,6 +4,9 @@
 
 package com.proyetogrupo.proyetofinal;
 
+import com.proyetogrupo.proyetofinal.negocio.dao.ServiceFactory;
+import com.proyetogrupo.proyetofinal.negocio.impl.AlunoNegocioImpl;
+import com.proyetogrupo.proyetofinal.negocio.model.Aluno;
 import com.proyetogrupo.proyetofinal.persistencia.DB;
 
 /**
@@ -21,7 +24,23 @@ public class ProyetoFinal {
             DB.inicializarBanco();
         } catch (Exception e) {
             System.out.println("Erro crítico ao criar banco: " + e.getMessage());
-            // Encerra o programa se não tiver banco 
+            DB.closeConnection();
         } 
+        
+        // O try-with-resources garante que o service.close() seja chamado no final
+        try (AlunoNegocioImpl alunoService = ServiceFactory.criarAlunoService()) {
+            
+            Aluno novo = new Aluno();
+            novo.setNome("Teste");
+            // ... setar dados ...
+            
+            // Isso vai validar, abrir transação, salvar e commitar (ou rollback)
+            alunoService.cadastrarAluno(novo); 
+            
+            System.out.println("Sucesso!");
+
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
     }
 }
