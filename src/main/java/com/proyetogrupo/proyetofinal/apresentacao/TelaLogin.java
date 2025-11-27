@@ -3,8 +3,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.proyetogrupo.proyetofinal.apresentacao;
-import javax.swing.JOptionPane;
 
+import javax.swing.JOptionPane;
+import com.proyetogrupo.proyetofinal.apresentacao.TelaPrincipal;
+import javax.swing.JOptionPane;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+import com.proyetogrupo.proyetofinal.negocio.dao.impl.ProfessorDAOImpl;  // Importando o DAO de Professor
+import com.proyetogrupo.proyetofinal.negocio.model.Professor;  // Importando a classe Professor
+import com.proyetogrupo.proyetofinal.persistencia.DB;  // Caso precise de DB para conexão
 
 /**
  *
@@ -15,7 +25,7 @@ public class TelaLogin extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaLogin.class.getName());
 
     /**
-     * Creates new form TelaLogin
+     * Creates new form TelaLogin1
      */
     public TelaLogin() {
         initComponents();
@@ -30,26 +40,23 @@ public class TelaLogin extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        lbUsuario = new javax.swing.JLabel();
         txtUsuario = new javax.swing.JTextField();
+        lbSenha = new javax.swing.JLabel();
+        txtSenha = new javax.swing.JPasswordField();
         btnEntrar = new javax.swing.JButton();
         btnSair = new javax.swing.JButton();
-        txtSenha = new javax.swing.JPasswordField();
-        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Insira seus dados de Login", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 13))); // NOI18N
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo_academia.png"))); // NOI18N
 
-        jLabel2.setFont(new java.awt.Font("sansserif", 0, 18)); // NOI18N
-        jLabel2.setText("Senha:");
+        lbUsuario.setText("Usuário");
 
-        jLabel1.setFont(new java.awt.Font("sansserif", 0, 18)); // NOI18N
-        jLabel1.setText("Usuário:");
+        lbSenha.setText("Senha:");
 
-        txtUsuario.addActionListener(this::txtUsuarioActionPerformed);
+        txtSenha.addActionListener(this::txtSenhaActionPerformed);
 
         btnEntrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Square-Tick@2x.png"))); // NOI18N
         btnEntrar.setText("Confirmar");
@@ -59,85 +66,62 @@ public class TelaLogin extends javax.swing.JFrame {
         btnSair.setText("Sair");
         btnSair.addActionListener(this::btnSairActionPerformed);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
-                    .addComponent(txtSenha))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(63, 63, 63)
-                .addComponent(btnEntrar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
-                .addComponent(btnSair)
-                .addGap(74, 74, 74))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(txtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnEntrar)
-                    .addComponent(btnSair))
-                .addContainerGap(20, Short.MAX_VALUE))
-        );
-
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo_academia.png"))); // NOI18N
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(22, 22, 22)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(36, 36, 36)
                 .addComponent(jLabel3)
-                .addGap(26, 26, 26)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(69, 69, 69)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lbSenha)
+                            .addComponent(lbUsuario))
+                        .addGap(32, 32, 32)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtUsuario)
+                            .addComponent(txtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(96, 96, 96)
+                        .addComponent(btnEntrar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnSair)))
+                .addContainerGap(125, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addGap(100, 100, 100)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbUsuario)
+                    .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbSenha)
+                    .addComponent(txtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(35, 35, 35)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnEntrar)
+                    .addComponent(btnSair))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(51, Short.MAX_VALUE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
+    private void txtSenhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSenhaActionPerformed
         // TODO add your handling code here:
-        txtSenha.requestFocus();
-    }//GEN-LAST:event_txtUsuarioActionPerformed
-
-    private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnEntrarActionPerformed
+    }//GEN-LAST:event_txtSenhaActionPerformed
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
-        // TODO add your handling code here:-
+        // TODO add your handling code here:
+                // TODO add your handling code here:-
                 int resposta = JOptionPane.showConfirmDialog(
                 this,
                 "Deseja realmente sair?",
@@ -150,6 +134,35 @@ public class TelaLogin extends javax.swing.JFrame {
             System.exit(0);
         }
     }//GEN-LAST:event_btnSairActionPerformed
+
+    private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
+    String usuario = txtUsuario.getText();
+    String senha = new String(txtSenha.getPassword());
+
+    try {
+        // Conecta usando sua classe DB
+        Connection connection = DB.getConnection();
+
+        // Cria o DAO
+        ProfessorDAOImpl professorDAO = new ProfessorDAOImpl(connection);
+
+        // Busca o professor pelo usuário
+        Professor professor = professorDAO.findByUsuario(usuario);
+
+        if (professor != null && professor.getSenha().equals(senha)) {
+            JOptionPane.showMessageDialog(this, "Login realizado com sucesso!");
+            abrirTelaPrincipal();
+        } else {
+            JOptionPane.showMessageDialog(this, "Usuário ou senha inválidos!");
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, 
+            "Erro ao conectar com o banco de dados: " + e.getMessage()
+        );
+    }
+    }//GEN-LAST:event_btnEntrarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -179,11 +192,18 @@ public class TelaLogin extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEntrar;
     private javax.swing.JButton btnSair;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel lbSenha;
+    private javax.swing.JLabel lbUsuario;
     private javax.swing.JPasswordField txtSenha;
     private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
+
+    private void abrirTelaPrincipal() {
+        TelaPrincipal tela = new TelaPrincipal(); // abre a janela principal
+        tela.setLocationRelativeTo(null);         // centraliza (opcional)
+        tela.setVisible(true);                    // mostra a tela principal
+        this.dispose();                           // fecha a tela de login
+    }
+
 }
