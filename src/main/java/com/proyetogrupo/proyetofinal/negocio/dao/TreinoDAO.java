@@ -10,9 +10,10 @@ public interface TreinoDAO {
     Treino saveAndReturn(Treino treino) throws SQLException;
     void update(Treino treino) throws SQLException;
     void deleteById(Integer id) throws SQLException;
-    boolean existsActiveByAluno(Integer idAluno) throws SQLException;
-    boolean existsActiveByProfessor(Integer idProfessor) throws SQLException;
-    List<Treino> listByAluno(int idAluno) throws SQLException;
-    List<Treino> listByProfessor(int idProfessor) throws SQLException;
 
+    boolean existsActiveByAluno(String cpfAluno) throws SQLException;
+    boolean existsActiveByProfessor(Integer idProfessor) throws SQLException;
+
+    List<Treino> listByAluno(String cpfAluno) throws SQLException;
+    List<Treino> listByProfessor(int idProfessor) throws SQLException;
 }

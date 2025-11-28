@@ -8,8 +8,8 @@ import java.util.Optional;
 public interface PagamentoDAO {
     Optional<Pagamento> findById(Integer id) throws SQLException;
     void save(Pagamento p) throws SQLException;
-    List<Pagamento> listByAluno(int idAluno) throws SQLException;
-    boolean existsByAluno(int idAluno) throws SQLException;
+    List<Pagamento> listByAluno(String cpfAluno) throws SQLException;   // ajustar
+    boolean existsByAluno(String cpfAluno) throws SQLException;         // ajustar
     void deleteById(Integer id) throws SQLException;
     
 }

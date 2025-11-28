@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class Treino {
     private Integer idTreino;
-    private Integer idAluno;
+    private String idAluno;
     private Integer idProfessor;
     private String descricao;
     private String status;
@@ -14,8 +14,8 @@ public class Treino {
     public Integer getIdTreino() { return idTreino; }
     public void setIdTreino(Integer idTreino) { this.idTreino = idTreino; }
 
-    public Integer getIdAluno() { return idAluno; }
-    public void setIdAluno(Integer idAluno) { this.idAluno = idAluno; }
+    public String getIdAluno() { return idAluno; }
+    public void setIdAluno(String idAluno) { this.idAluno = idAluno; }
 
     public Integer getIdProfessor() { return idProfessor; }
     public void setIdProfessor(Integer idProfessor) { this.idProfessor = idProfessor; }

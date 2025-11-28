@@ -10,8 +10,9 @@ import java.util.Optional;
 import com.proyetogrupo.proyetofinal.negocio.model.Aluno;
 
 public interface AlunoNegocio {
-    Optional<Aluno> buscarPorId(Integer id) throws SQLException;
+    // ID do aluno agora é o CPF (String)
+    Optional<Aluno> buscarPorId(String cpf) throws SQLException;
     void cadastrarAluno(Aluno aluno) throws SQLException;
     void atualizarAluno(Aluno aluno) throws SQLException;
-    void removerAluno(Integer id) throws SQLException;
+    void removerAluno(String cpf) throws SQLException;
 }

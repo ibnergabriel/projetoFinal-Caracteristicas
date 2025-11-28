@@ -34,7 +34,7 @@ public class ServiceFactory {
         PagamentoDAOImpl pagamentoDAO = new PagamentoDAOImpl(conn);
         
         // Retorna o Serviço montado
-        return new AlunoNegocioImpl(alunoDAO, treinoDAO, pagamentoDAO, conn);
+        return new AlunoNegocioImpl(alunoDAO, pagamentoDAO, treinoDAO, conn);
     }
 
     public static ProfessorNegocioImpl criarProfessorService() {

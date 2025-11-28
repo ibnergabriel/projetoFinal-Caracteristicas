@@ -13,8 +13,14 @@ import com.proyetogrupo.proyetofinal.negocio.model.Treino;
 public interface TreinoNegocio {
     Treino criarTreino(Treino treino) throws SQLException;
     Treino atualizarTreino(Treino treino) throws SQLException;
+
+    // id do treino continua inteiro
     void finalizarTreino(int id) throws SQLException;
     Optional<Treino> buscarPorId(int id) throws SQLException;
-    List<Treino> listarPorAluno(int idAluno) throws SQLException;
+
+    // aqui é o CPF do aluno (String)
+    List<Treino> listarPorAluno(String cpfAluno) throws SQLException;
+
+    // professor continua com id numérico
     List<Treino> listarPorProfessor(int idProfessor) throws SQLException;
 }

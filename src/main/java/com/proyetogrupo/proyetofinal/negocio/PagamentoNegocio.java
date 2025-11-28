@@ -11,5 +11,7 @@ import com.proyetogrupo.proyetofinal.negocio.model.Pagamento;
 
 public interface PagamentoNegocio {
     void registrarPagamento(Pagamento pagamento) throws SQLException;
-    List<Pagamento> listarPorAluno(int idAluno) throws SQLException;
+
+    // aqui também, CPF do aluno
+    List<Pagamento> listarPorAluno(String cpfAluno) throws SQLException;
 }

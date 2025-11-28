@@ -3,7 +3,7 @@ package com.proyetogrupo.proyetofinal.negocio.model;
 import java.time.LocalDate;
 
 public class Aluno {
-    private Integer idAluno;
+    private String idAluno;
     private String nome;
     private Integer idade;
     private String sexo;
@@ -11,8 +11,8 @@ public class Aluno {
     private String email;
     private LocalDate dataMatricula;
 
-    public Integer getIdAluno() { return idAluno; }
-    public void setIdAluno(Integer idAluno) { this.idAluno = idAluno; }
+    public String getIdAluno() { return idAluno; }
+    public void setIdAluno(String idAluno) { this.idAluno = idAluno; }
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }

@@ -7,96 +7,115 @@ import com.proyetogrupo.proyetofinal.negocio.dao.TreinoDAO;
 import com.proyetogrupo.proyetofinal.negocio.exceptions.BusinessException;
 import com.proyetogrupo.proyetofinal.negocio.model.Aluno;
 import com.proyetogrupo.proyetofinal.negocio.util.ValidationUtil;
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Optional;
 
-/**
- *
- * @author ibner
- */
 public class AlunoNegocioImpl implements AlunoNegocio, AutoCloseable {
 
-    private final AlunoDAO dao;
-    private final TreinoDAO treinoDAO;
+    private final AlunoDAO alunoDAO;
     private final PagamentoDAO pagamentoDAO;
+    private final TreinoDAO treinoDAO;
     private final Connection connection;
 
-    public AlunoNegocioImpl(AlunoDAO dao, TreinoDAO treinoDAO, PagamentoDAO pagamentoDAO, Connection connection) {
-        this.dao = dao;
-        this.treinoDAO = treinoDAO;
+    public AlunoNegocioImpl(AlunoDAO alunoDAO,
+                            PagamentoDAO pagamentoDAO,
+                            TreinoDAO treinoDAO,
+                            Connection connection) {
+        this.alunoDAO = alunoDAO;
         this.pagamentoDAO = pagamentoDAO;
+        this.treinoDAO = treinoDAO;
         this.connection = connection;
     }
 
+    // =======================
+    // MÉTODOS DA INTERFACE
+    // =======================
+
     @Override
-    public Optional<Aluno> buscarPorId(Integer id) throws SQLException {
-        return dao.findById(id);
+    public Optional<Aluno> buscarPorId(String cpf) throws SQLException {
+        if (ValidationUtil.isBlank(cpf)) {
+            throw new BusinessException("CPF do aluno é obrigatório.");
+        }
+        return alunoDAO.findById(cpf);
     }
 
     @Override
     public void cadastrarAluno(Aluno aluno) throws SQLException {
-        try {
-            // Validações
-            if (aluno == null) throw new BusinessException("Aluno inválido.");
-            if (ValidationUtil.isBlank(aluno.getNome())) throw new BusinessException("Nome obrigatório.");
-            if (aluno.getIdade() == null || aluno.getIdade() < 14) throw new BusinessException("Idade mínima: 14 anos.");
-            if (!ValidationUtil.isBlank(aluno.getEmail()) && !ValidationUtil.isValidEmail(aluno.getEmail())) 
-                throw new BusinessException("Email inválido.");
+        validarAluno(aluno, true);
 
-            // Transação
-            connection.setAutoCommit(false);
-            dao.save(aluno);
-            connection.commit();
-
-        } catch (SQLException e) {
-            connection.rollback();
-            throw e;
-        } finally {
-            connection.setAutoCommit(true);
+        String cpf = aluno.getIdAluno(); // agora é String (CPF)
+        if (alunoDAO.existsById(cpf)) {
+            throw new BusinessException("Já existe um aluno cadastrado com esse CPF.");
         }
+
+        alunoDAO.save(aluno);
     }
 
     @Override
     public void atualizarAluno(Aluno aluno) throws SQLException {
-        try {
-            if (aluno == null || aluno.getIdAluno() == null) throw new BusinessException("Aluno inválido.");
-            
-            dao.findById(aluno.getIdAluno())
-               .orElseThrow(() -> new BusinessException("Aluno não encontrado."));
+        validarAluno(aluno, false);
 
-            connection.setAutoCommit(false);
-            dao.update(aluno);
-            connection.commit();
-
-        } catch (SQLException e) {
-            connection.rollback();
-            throw e;
-        } finally {
-            connection.setAutoCommit(true);
+        String cpf = aluno.getIdAluno();
+        if (!alunoDAO.existsById(cpf)) {
+            throw new BusinessException("Aluno não encontrado para atualização.");
         }
+
+        alunoDAO.update(aluno);
     }
 
     @Override
-    public void removerAluno(Integer id) throws SQLException {
-        try {
-            if (!dao.existsById(id)) throw new BusinessException("Aluno não encontrado.");
-            if (treinoDAO.existsActiveByAluno(id)) throw new BusinessException("Aluno possui treino ativo.");
-            if (pagamentoDAO.existsByAluno(id)) throw new BusinessException("Aluno possui pagamentos registrados.");
-
-            connection.setAutoCommit(false);
-            dao.deleteById(id);
-            connection.commit();
-
-        } catch (SQLException e) {
-            connection.rollback();
-            throw e;
-        } finally {
-            connection.setAutoCommit(true);
+    public void removerAluno(String cpf) throws SQLException {
+        if (ValidationUtil.isBlank(cpf)) {
+            throw new BusinessException("CPF do aluno é obrigatório para remoção.");
         }
+
+        if (!alunoDAO.existsById(cpf)) {
+            throw new BusinessException("Aluno não encontrado para remoção.");
+        }
+
+        // Regra de negócio: não remover se tiver treino ativo ou pagamento
+        if (treinoDAO.existsActiveByAluno(cpf)) {
+            throw new BusinessException("Não é possível remover o aluno com treino ativo.");
+        }
+
+        if (pagamentoDAO.existsByAluno(cpf)) {
+            throw new BusinessException("Não é possível remover o aluno com pagamentos registrados.");
+        }
+
+        alunoDAO.deleteById(cpf);
+    }
+
+    // =======================
+    // SUPORTE / VALIDAÇÃO
+    // =======================
+
+    private void validarAluno(Aluno aluno, boolean novo) {
+        if (aluno == null) {
+            throw new BusinessException("Aluno não pode ser nulo.");
+        }
+
+        if (ValidationUtil.isBlank(aluno.getIdAluno())) {
+            throw new BusinessException("CPF do aluno é obrigatório.");
+        }
+
+        if (ValidationUtil.isBlank(aluno.getNome())) {
+            throw new BusinessException("Nome do aluno é obrigatório.");
+        }
+
+        if (!ValidationUtil.isBlank(aluno.getEmail())
+                && !ValidationUtil.isValidEmail(aluno.getEmail())) {
+            throw new BusinessException("E-mail do aluno é inválido.");
+        }
+
+        // aqui você pode colocar mais validações (idade, telefone, etc) se quiser
     }
 
     @Override
     public void close() throws Exception {
-        if (connection != null && !connection.isClosed()) connection.close();
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
+        }
     }
 }

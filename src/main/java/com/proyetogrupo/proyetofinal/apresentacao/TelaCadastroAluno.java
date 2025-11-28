@@ -310,6 +310,8 @@ public class TelaCadastroAluno extends javax.swing.JFrame {
 
         // Cria o objeto Aluno
         Aluno aluno = new Aluno();
+        
+        aluno.setIdAluno(cpf);
 
         // Nome
         aluno.setNome(txtAlunoNome.getText().trim());
