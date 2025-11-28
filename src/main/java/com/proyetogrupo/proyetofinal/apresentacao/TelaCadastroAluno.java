@@ -10,12 +10,23 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import com.proyetogrupo.proyetofinal.negocio.model.Aluno;
+import com.proyetogrupo.proyetofinal.negocio.dao.AlunoDAO;
+import com.proyetogrupo.proyetofinal.negocio.dao.impl.AlunoDAOImpl;
+import com.proyetogrupo.proyetofinal.persistencia.DB;
+import java.sql.Connection;
+import java.time.LocalDate;
+import javax.swing.JOptionPane;
+
 
 /**
  *
  * @author pedro
  */
 public class TelaCadastroAluno extends javax.swing.JFrame {
+    
+    private final AlunoDAO alunoDAO;
+
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaCadastroAluno.class.getName());
 
@@ -24,6 +35,8 @@ public class TelaCadastroAluno extends javax.swing.JFrame {
      */
     public TelaCadastroAluno() {
         initComponents();
+        Connection conn = DB.getConnection();   // usa a mesma classe que o ServiceFactory usa
+        alunoDAO = new AlunoDAOImpl(conn);      // nosso DAO pronto pra usar
     }
 
     /**
@@ -287,6 +300,65 @@ public class TelaCadastroAluno extends javax.swing.JFrame {
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
         // TODO add your handling code here:
+            try {
+        // --- Validação simples de CPF ---
+        String cpf = txtAlunoCPF.getText().trim();
+        if (cpf.isBlank() || cpf.equals("   .   .   -  ")) { // depende da máscara
+            JOptionPane.showMessageDialog(this, "Informe o CPF do aluno.");
+            return;
+        }
+
+        // Cria o objeto Aluno
+        Aluno aluno = new Aluno();
+
+        // Nome
+        aluno.setNome(txtAlunoNome.getText().trim());
+
+        // Idade
+        String idadeStr = txtAlunoIdade.getText().trim();
+        if (!idadeStr.isBlank()) {
+            aluno.setIdade(Integer.parseInt(idadeStr));
+        } else {
+            aluno.setIdade(null); // se no modelo for Integer
+        }
+
+        // Sexo
+        if (rbAlunoMasculino.isSelected()) {
+            aluno.setSexo("Masculino");
+        } else if (rbAlunoFeminino.isSelected()) {
+            aluno.setSexo("Feminino");
+        } else {
+            aluno.setSexo(null);
+        }
+
+        // Email
+        aluno.setEmail(txtAlunoEmail.getText().trim());
+
+        // Telefone
+        aluno.setTelefone(txtAlunoTelefone.getText().trim());
+
+        // Data da matrícula (hoje)
+        aluno.setDataMatricula(LocalDate.now());
+
+        // Aqui o CPF AINDA NÃO vai para o banco,
+        // porque a tabela/DAO não têm campo cpf.
+        // Dá pra adicionar depois, se quiser.
+
+        // Salva no banco
+        alunoDAO.save(aluno);
+
+        JOptionPane.showMessageDialog(this,
+                "Aluno cadastrado com sucesso! ID gerado: " + aluno.getIdAluno());
+
+        limparCampos();
+
+    } catch (Exception e) {
+        logger.log(java.util.logging.Level.SEVERE, "Erro ao salvar aluno", e);
+        JOptionPane.showMessageDialog(this,
+                "Erro ao cadastrar aluno: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     /**
@@ -313,6 +385,17 @@ public class TelaCadastroAluno extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new TelaCadastroAluno().setVisible(true));
     }
+    
+    private void limparCampos() {
+        txtAlunoNome.setText("");
+        txtAlunoCPF.setValue(null);
+        txtAlunoIdade.setValue(null);
+        txtAlunoTelefone.setValue(null);
+        txtAlunoEmail.setText("");
+        rbAlunoMasculino.setSelected(false);
+        rbAlunoFeminino.setSelected(false);
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btUpload;
