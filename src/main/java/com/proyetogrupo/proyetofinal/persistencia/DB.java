@@ -92,7 +92,7 @@ public class DB {
             
             // Tabela Aluno
             st.execute("CREATE TABLE IF NOT EXISTS Aluno ("
-                    + "idAluno INT PRIMARY KEY AUTO_INCREMENT, "
+                    + "idAluno VARCHAR(14), "
                     + "nome VARCHAR(100), "
                     + "idade INT, "
                     + "sexo VARCHAR(100), "
@@ -117,7 +117,7 @@ public class DB {
             // Tabela Treino (Depende de Aluno e Professor)
             st.execute("CREATE TABLE IF NOT EXISTS Treino ("
                     + "idTreino INT PRIMARY KEY AUTO_INCREMENT, "
-                    + "idAluno INT NOT NULL, "
+                    + "idAluno VARCHAR(14) NOT NULL, "
                     + "idProfessor INT NOT NULL, "
                     + "status VARCHAR(100), "
                     + "descricao VARCHAR(100), "
@@ -130,7 +130,7 @@ public class DB {
             // Tabela Pagamento (Depende de Aluno)
             st.execute("CREATE TABLE IF NOT EXISTS Pagamento ("
                     + "idPagamento INT PRIMARY KEY AUTO_INCREMENT, "
-                    + "idAluno INT NOT NULL, "
+                    + "idAluno VARCHAR(14) NOT NULL, "
                     + "data_pagamento DATE, "
                     + "valor DECIMAL(10, 2), "
                     + "CONSTRAINT fk_pagamento_aluno FOREIGN KEY (idAluno) REFERENCES Aluno(idAluno)"
