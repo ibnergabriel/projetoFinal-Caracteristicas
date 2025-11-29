@@ -4,6 +4,22 @@
  */
 package com.proyetogrupo.proyetofinal.apresentacao;
 
+import com.proyetogrupo.proyetofinal.negocio.TreinoNegocio;
+import com.proyetogrupo.proyetofinal.negocio.dao.ServiceFactory;
+import com.proyetogrupo.proyetofinal.negocio.dao.impl.AlunoDAOImpl;
+import com.proyetogrupo.proyetofinal.negocio.model.Aluno;
+import com.proyetogrupo.proyetofinal.negocio.model.Treino;
+import com.proyetogrupo.proyetofinal.persistencia.DB;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author pedro
@@ -11,12 +27,22 @@ package com.proyetogrupo.proyetofinal.apresentacao;
 public class TelaTreinosAtivos extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaTreinosAtivos.class.getName());
-
+    
+    private final TreinoNegocio treinoNegocio;
     /**
      * Creates new form TreinosAtivos
      */
     public TelaTreinosAtivos() {
         initComponents();
+            // cria o serviço de Treino usando a ServiceFactory (camada de negócio)
+        this.treinoNegocio = ServiceFactory.criarTreinoService();
+
+        // limpa as linhas padrão criadas pelo NetBeans na tabela
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0);
+
+        // carrega os alunos no combo
+        carregarAlunosNoCombo();
     }
 
     /**
@@ -47,6 +73,7 @@ public class TelaTreinosAtivos extends javax.swing.JFrame {
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
 
         btnCarregarTreinosA.setText("Carregar treinos Ativos");
+        btnCarregarTreinosA.addActionListener(this::btnCarregarTreinosAActionPerformed);
 
         javax.swing.GroupLayout panelFiltroLayout = new javax.swing.GroupLayout(panelFiltro);
         panelFiltro.setLayout(panelFiltroLayout);
@@ -157,6 +184,11 @@ public class TelaTreinosAtivos extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnCarregarTreinosAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCarregarTreinosAActionPerformed
+        // TODO add your handling code here:
+        carregarTreinosAtivos();
+    }//GEN-LAST:event_btnCarregarTreinosAActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -181,6 +213,90 @@ public class TelaTreinosAtivos extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new TelaTreinosAtivos().setVisible(true));
     }
+    
+     // -------------------- MÉTODOS AUXILIARES ------------------------
+
+    private void carregarAlunosNoCombo() {
+        try {
+            // Pega a conexão com o banco
+            Connection conn = DB.getConnection();
+
+            // Usa o DAO que você já tem pra listar todos os alunos
+            AlunoDAOImpl alunoDAO = new AlunoDAOImpl(conn);
+            List<Aluno> alunos = alunoDAO.listAll();
+
+            DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+            model.addElement(""); // primeira opção vazia / "nenhum selecionado"
+
+            for (Aluno a : alunos) {
+                // idAluno é o CPF (VARCHAR(14))
+                model.addElement(a.getIdAluno());
+                // Se quiser: model.addElement(a.getIdAluno() + " - " + a.getNome());
+            }
+
+            jComboBox1.setModel(model);
+
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Erro ao carregar alunos", e);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Erro ao carregar alunos: " + e.getMessage(),
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
+    private void carregarTreinosAtivos() {
+        // pega o CPF do aluno selecionado no combo
+        String cpfAluno = (String) jComboBox1.getSelectedItem();
+
+        if (cpfAluno == null || cpfAluno.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Selecione um aluno no filtro.",
+                    "Aviso",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        try {
+            // Busca todos os treinos desse aluno pela camada de negócio
+            List<Treino> treinos = treinoNegocio.listarPorAluno(cpfAluno);
+
+            // Pega o modelo da tabela e limpa as linhas
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            model.setRowCount(0);
+
+            // Preenche apenas os treinos com status ATIVO
+            for (Treino t : treinos) {
+                if (!"ATIVO".equalsIgnoreCase(t.getStatus())) {
+                    continue; // pula treinos inativos
+                }
+
+                model.addRow(new Object[]{
+                    t.getIdTreino(),                          // ID Treino
+                    t.getIdAluno(),                           // CPF Aluno
+                    t.getDataInicio() != null
+                        ? t.getDataInicio().toString()        // Data Início
+                        : "",
+                    t.getDescricao(),                         // Descrição
+                    t.getStatus()                             // Status
+                });
+            }
+
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Erro ao carregar treinos ativos", e);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Erro ao carregar treinos: " + e.getMessage(),
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane TabelaTreinosAtivos;
