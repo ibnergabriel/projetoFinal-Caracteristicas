@@ -4,6 +4,26 @@
  */
 package com.proyetogrupo.proyetofinal.apresentacao;
 
+import com.proyetogrupo.proyetofinal.negocio.AlunoNegocio;
+import com.proyetogrupo.proyetofinal.negocio.PagamentoNegocio;
+import com.proyetogrupo.proyetofinal.negocio.dao.ServiceFactory;
+import com.proyetogrupo.proyetofinal.negocio.exceptions.BusinessException;
+import com.proyetogrupo.proyetofinal.negocio.model.Aluno;
+import com.proyetogrupo.proyetofinal.negocio.model.Pagamento;
+
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+
 /**
  *
  * @author pedro
@@ -11,6 +31,13 @@ package com.proyetogrupo.proyetofinal.apresentacao;
 public class TelaPagamentos extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaPagamentos.class.getName());
+    private PagamentoNegocio pagamentoNegocio;
+    private AlunoNegocio alunoNegocio;
+
+    private final DateTimeFormatter dateFormatter =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    private final List<Pagamento> pagamentosCarregados = new ArrayList<>();
 
     /**
      * Creates new form TelaPagamentos
@@ -18,6 +45,23 @@ public class TelaPagamentos extends javax.swing.JFrame {
     public TelaPagamentos() {
         initComponents();
         setLocationRelativeTo(null);  // centraliza a janela
+        try {
+            javax.swing.text.MaskFormatter cpfMask = new javax.swing.text.MaskFormatter("###.###.###-##");
+            cpfMask.setPlaceholderCharacter('_');
+            txtIdAluno.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(cpfMask));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        
+        // inicializa serviços
+        pagamentoNegocio = ServiceFactory.criarPagamentoService();
+        alunoNegocio = ServiceFactory.criarAlunoService();
+
+
+
+        // tabela começa vazia
+        limparTabelaPagamentos();
     }
 
     /**
@@ -31,7 +75,6 @@ public class TelaPagamentos extends javax.swing.JFrame {
 
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtIdAluno = new javax.swing.JTextField();
         btnBuscarAluno = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         txtNomeAluno = new javax.swing.JTextField();
@@ -40,11 +83,11 @@ public class TelaPagamentos extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         txtValor = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
+        txtIdAluno = new javax.swing.JFormattedTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPagamentos = new javax.swing.JTable();
         btnSalvar = new javax.swing.JButton();
         btnFechar = new javax.swing.JButton();
-        btnInadimplentes = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Controle de Pagamentos");
@@ -54,6 +97,7 @@ public class TelaPagamentos extends javax.swing.JFrame {
         jLabel1.setText("Aluno (CPF):");
 
         btnBuscarAluno.setText("Buscar");
+        btnBuscarAluno.addActionListener(this::btnBuscarAlunoActionPerformed);
 
         jLabel2.setText("Nome:");
 
@@ -67,6 +111,8 @@ public class TelaPagamentos extends javax.swing.JFrame {
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icone-de-dinheiro2.png"))); // NOI18N
 
+        txtIdAluno.addActionListener(this::txtIdAlunoActionPerformed);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -74,15 +120,14 @@ public class TelaPagamentos extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(62, 62, 62)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addComponent(jLabel3)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(ftxtDataPagamento))
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addComponent(jLabel1)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(txtIdAluno, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ftxtDataPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtIdAluno, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -103,10 +148,10 @@ public class TelaPagamentos extends javax.swing.JFrame {
                 .addGap(34, 34, 34)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(txtIdAluno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBuscarAluno)
                     .addComponent(jLabel2)
-                    .addComponent(txtNomeAluno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNomeAluno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIdAluno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(29, 29, 29)
@@ -152,10 +197,10 @@ public class TelaPagamentos extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tblPagamentos);
 
         btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(this::btnSalvarActionPerformed);
 
         btnFechar.setText("Fechar");
-
-        btnInadimplentes.setText("Inadimplentes");
+        btnFechar.addActionListener(this::btnFecharActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -165,24 +210,14 @@ public class TelaPagamentos extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(24, 24, 24))
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(160, 160, 160)
-                        .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(426, 426, 426)
-                        .addComponent(btnFechar, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(426, 426, 426)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnFechar, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addContainerGap(674, Short.MAX_VALUE)
-                    .addComponent(btnInadimplentes, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(245, 245, 245)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -191,20 +226,35 @@ public class TelaPagamentos extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(56, 56, 56)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
                 .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addGap(29, 29, 29)
                 .addComponent(btnFechar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(23, 23, 23))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addContainerGap(739, Short.MAX_VALUE)
-                    .addComponent(btnInadimplentes, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(88, 88, 88)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        // TODO add your handling code here:
+        salvarPagamento();
+        
+    }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnBuscarAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarAlunoActionPerformed
+        // TODO add your handling code here:
+        buscarAluno();
+    }//GEN-LAST:event_btnBuscarAlunoActionPerformed
+
+    private void btnFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharActionPerformed
+        // TODO add your handling code here:
+        dispose();
+    }//GEN-LAST:event_btnFecharActionPerformed
+
+    private void txtIdAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdAlunoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIdAlunoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -231,10 +281,161 @@ public class TelaPagamentos extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> new TelaPagamentos().setVisible(true));
     }
 
+    private void buscarAluno() {
+    String cpf = txtIdAluno.getText().trim();
+
+    if (cpf.isEmpty()) {
+        JOptionPane.showMessageDialog(this,
+                "Informe o CPF do aluno.",
+                "Aviso",
+                JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    try {
+        Optional<Aluno> opt = alunoNegocio.buscarPorId(cpf);
+        if (opt.isPresent()) {
+            Aluno aluno = opt.get();
+            txtNomeAluno.setText(aluno.getNome());
+            carregarPagamentosAluno(cpf);
+        } else {
+            txtNomeAluno.setText("");
+            limparTabelaPagamentos();
+            JOptionPane.showMessageDialog(this,
+                    "Aluno não encontrado para o CPF informado.",
+                    "Aviso",
+                    JOptionPane.WARNING_MESSAGE);
+        }
+    } catch (SQLException e) {
+        logger.log(Level.SEVERE, "Erro ao buscar aluno", e);
+        JOptionPane.showMessageDialog(this,
+                "Erro ao buscar aluno: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    }
+}
+
+    private void carregarPagamentosAluno(String cpfAluno) {
+    try {
+        pagamentosCarregados.clear();
+        pagamentosCarregados.addAll(pagamentoNegocio.listarPorAluno(cpfAluno));
+
+        DefaultTableModel model = (DefaultTableModel) tblPagamentos.getModel();
+        model.setRowCount(0);
+
+        for (Pagamento p : pagamentosCarregados) {
+            model.addRow(new Object[]{
+                    p.getIdPagamento(),
+                    p.getIdAluno(),
+                    p.getDataPagamento() != null
+                            ? p.getDataPagamento().format(dateFormatter)
+                            : "",
+                    p.getValor()
+            });
+        }
+    } catch (SQLException e) {
+        logger.log(Level.SEVERE, "Erro ao carregar pagamentos", e);
+        JOptionPane.showMessageDialog(this,
+                "Erro ao carregar pagamentos: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    }
+}
+
+    private void limparTabelaPagamentos() {
+    DefaultTableModel model = (DefaultTableModel) tblPagamentos.getModel();
+    model.setRowCount(0);
+    pagamentosCarregados.clear();
+}
+
+    private void salvarPagamento() {
+    String cpfAluno = txtIdAluno.getText().trim();
+    String dataStr = ftxtDataPagamento.getText().trim();
+    String valorStr = txtValor.getText().trim();
+
+    if (cpfAluno.isEmpty()) {
+        JOptionPane.showMessageDialog(this,
+                "Informe o CPF do aluno antes de salvar o pagamento.",
+                "Aviso",
+                JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // valor
+    Integer valor = null;
+    try {
+        if (!valorStr.isEmpty()) {
+            valor = Integer.parseInt(valorStr);
+        }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this,
+                "Valor inválido. Digite apenas números inteiros.",
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // data
+    LocalDate dataPagamento = null;
+    String soDigitosData = dataStr.replace("/", "").trim();
+    if (!soDigitosData.isEmpty()) {
+        try {
+            dataPagamento = LocalDate.parse(dataStr, dateFormatter);
+        } catch (DateTimeParseException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Data em formato inválido. Use dd/MM/yyyy.",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+    }
+
+    // monta objeto Pagamento
+    Pagamento pagamento = new Pagamento();
+    pagamento.setIdAluno(cpfAluno);
+    pagamento.setDataPagamento(dataPagamento); // se nulo, o negócio coloca a data de hoje
+    pagamento.setValor(valor);
+
+    try {
+        pagamentoNegocio.registrarPagamento(pagamento);
+
+        JOptionPane.showMessageDialog(this,
+                "Pagamento registrado com sucesso!",
+                "Sucesso",
+                JOptionPane.INFORMATION_MESSAGE);
+
+        // recarrega a tabela do aluno atual
+        carregarPagamentosAluno(cpfAluno);
+        limparCamposPagamento();
+
+    } catch (BusinessException e) {
+        JOptionPane.showMessageDialog(this,
+                e.getMessage(),
+                "Erro de validação",
+                JOptionPane.WARNING_MESSAGE);
+    } catch (SQLException e) {
+        logger.log(Level.SEVERE, "Erro ao salvar pagamento", e);
+        JOptionPane.showMessageDialog(this,
+                "Erro ao salvar pagamento no banco: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    } catch (Exception e) {
+        logger.log(Level.SEVERE, "Erro inesperado ao salvar pagamento", e);
+        JOptionPane.showMessageDialog(this,
+                "Erro inesperado: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    }
+}
+
+    private void limparCamposPagamento() {
+    ftxtDataPagamento.setText("");
+    txtValor.setText("");
+}
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscarAluno;
     private javax.swing.JButton btnFechar;
-    private javax.swing.JButton btnInadimplentes;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JFormattedTextField ftxtDataPagamento;
     private javax.swing.JLabel jLabel1;
@@ -245,7 +446,7 @@ public class TelaPagamentos extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblPagamentos;
-    private javax.swing.JTextField txtIdAluno;
+    private javax.swing.JFormattedTextField txtIdAluno;
     private javax.swing.JTextField txtNomeAluno;
     private javax.swing.JTextField txtValor;
     // End of variables declaration//GEN-END:variables
