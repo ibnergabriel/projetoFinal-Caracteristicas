@@ -4,6 +4,28 @@
  */
 package com.proyetogrupo.proyetofinal.apresentacao;
 
+import com.proyetogrupo.proyetofinal.negocio.TreinoNegocio;
+import com.proyetogrupo.proyetofinal.negocio.dao.ServiceFactory;
+import com.proyetogrupo.proyetofinal.negocio.dao.impl.AlunoDAOImpl;
+import com.proyetogrupo.proyetofinal.negocio.exceptions.BusinessException;
+import com.proyetogrupo.proyetofinal.negocio.model.Aluno;
+import com.proyetogrupo.proyetofinal.negocio.model.Treino;
+import com.proyetogrupo.proyetofinal.persistencia.DB;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+
 /**
  *
  * @author pedro
@@ -11,12 +33,25 @@ package com.proyetogrupo.proyetofinal.apresentacao;
 public class TelaTreinos extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaTreinos.class.getName());
+    private TreinoNegocio treinoNegocio;
+    private final List<Treino> treinosCarregados = new ArrayList<>();
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+
 
     /**
      * Creates new form TelaTreinos1
      */
     public TelaTreinos() {
         initComponents();
+    // inicializa serviço de treinos
+    treinoNegocio = ServiceFactory.criarTreinoService();
+
+    // carrega combos
+    carregarAlunos();
+    carregarProfessores();
+
+    // botão "Carregar treinos" do aluno
+    btnCarregarTreinos12.addActionListener(e -> carregarTreinosDoAlunoSelecionado());
     }
 
     /**
@@ -327,10 +362,12 @@ public class TelaTreinos extends javax.swing.JFrame {
 
     private void btnEntrar22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrar22ActionPerformed
         // TODO add your handling code here:
+        salvarTreino();
     }//GEN-LAST:event_btnEntrar22ActionPerformed
 
     private void btnDesativar7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDesativar7ActionPerformed
         // TODO add your handling code here:
+        desativarTreinoSelecionado();
     }//GEN-LAST:event_btnDesativar7ActionPerformed
 
     /**
@@ -357,6 +394,216 @@ public class TelaTreinos extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new TelaTreinos().setVisible(true));
     }
+    private void salvarTreino() {
+    try {
+        // 1. Pega CPF do aluno selecionado
+        String itemAluno = (String) comboAluno12.getSelectedItem();
+        if (itemAluno == null || itemAluno.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Selecione um aluno.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        String cpfAluno = itemAluno.split(" - ")[0].trim(); // "12345678900 - João" -> "12345678900"
+
+        // 2. Pega id do professor selecionado
+        String itemProfessor = (String) comboProfessor22.getSelectedItem();
+        if (itemProfessor == null || itemProfessor.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Selecione um professor.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int idProfessor = Integer.parseInt(itemProfessor.split(" - ")[0].trim()); // "1 - Giomar" -> 1
+
+        // 3. Demais campos
+        String descricao = txtDescricao22.getText().trim();
+        String statusSelecionado = (String) jComboBox23.getSelectedItem(); // "Ativo"/"Inativo" (negócio depois força "ATIVO")
+
+        LocalDate dataInicio = parseData(txtDataInicio22.getText());
+        LocalDate dataFim = parseData(txtDataFim22.getText());
+
+        // 4. Monta objeto Treino
+        Treino treino = new Treino();
+        treino.setIdAluno(cpfAluno);        // CPF do aluno (String)
+        treino.setIdProfessor(idProfessor); // id numérico do professor
+        treino.setDescricao(descricao);
+        treino.setStatus(statusSelecionado);
+        treino.setDataInicio(dataInicio);
+        treino.setDataFim(dataFim);
+
+        // 5. Chama camada de negócio
+        treinoNegocio.criarTreino(treino);
+
+        JOptionPane.showMessageDialog(this,
+                "Treino salvo com sucesso!",
+                "Sucesso",
+                JOptionPane.INFORMATION_MESSAGE);
+
+        // recarrega tabela do aluno atual
+        carregarTreinosDoAlunoSelecionado();
+        limparCamposTreino();
+
+    } catch (DateTimeParseException e) {
+        JOptionPane.showMessageDialog(this,
+                "Data em formato inválido. Use dd/MM/aa.",
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    } catch (BusinessException e) {
+        JOptionPane.showMessageDialog(this,
+                e.getMessage(),
+                "Erro de validação",
+                JOptionPane.WARNING_MESSAGE);
+    } catch (SQLException e) {
+        logger.log(Level.SEVERE, "Erro ao salvar treino", e);
+        JOptionPane.showMessageDialog(this,
+                "Erro ao salvar treino no banco: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    } catch (Exception e) {
+        logger.log(Level.SEVERE, "Erro inesperado ao salvar treino", e);
+        JOptionPane.showMessageDialog(this,
+                "Erro inesperado: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    }
+}
+    
+    private LocalDate parseData(String texto) {
+    if (texto == null) return null;
+    String limpo = texto.replace("/", "").trim();
+    if (limpo.isEmpty()) {
+        return null; // campo em branco
+    }
+    return LocalDate.parse(texto.trim(), dateFormatter);
+}
+
+    private void limparCamposTreino() {
+    txtDescricao22.setText("");
+    txtDataInicio22.setText("");
+    txtDataFim22.setText("");
+    jComboBox23.setSelectedIndex(0); // "Ativo"
+}
+
+    
+    private void carregarAlunos() {
+    comboAluno12.removeAllItems();
+
+    try {
+        AlunoDAOImpl alunoDAO = new AlunoDAOImpl(DB.getConnection());
+        List<Aluno> alunos = alunoDAO.listAll();
+
+        for (Aluno a : alunos) {
+            // Exibe "CPF - Nome" no combo
+            comboAluno12.addItem(a.getIdAluno() + " - " + a.getNome());
+        }
+    } catch (SQLException e) {
+        logger.log(Level.SEVERE, "Erro ao carregar alunos", e);
+        JOptionPane.showMessageDialog(this,
+                "Erro ao carregar alunos: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    }
+}
+
+    
+    private void carregarProfessores() {
+    comboProfessor22.removeAllItems();
+
+    String sql = "SELECT idProfessor, nome FROM Professor";
+
+    try (PreparedStatement st = DB.getConnection().prepareStatement(sql);
+         ResultSet rs = st.executeQuery()) {
+
+        while (rs.next()) {
+            int id = rs.getInt("idProfessor");
+            String nome = rs.getString("nome");
+            comboProfessor22.addItem(id + " - " + nome);
+        }
+
+    } catch (SQLException e) {
+        logger.log(Level.SEVERE, "Erro ao carregar professores", e);
+        JOptionPane.showMessageDialog(this,
+                "Erro ao carregar professores: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    }
+}
+
+    
+    private void carregarTreinosDoAlunoSelecionado() {
+    String itemAluno = (String) comboAluno12.getSelectedItem();
+    if (itemAluno == null || itemAluno.isBlank()) {
+        JOptionPane.showMessageDialog(this, "Selecione um aluno.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    String cpfAluno = itemAluno.split(" - ")[0].trim();
+
+    try {
+        treinosCarregados.clear();
+        treinosCarregados.addAll(treinoNegocio.listarPorAluno(cpfAluno));
+
+        DefaultTableModel model = (DefaultTableModel) jTable8.getModel();
+        model.setRowCount(0);
+
+        for (Treino t : treinosCarregados) {
+            model.addRow(new Object[]{
+                    t.getIdAluno(), // CPF
+                    t.getIdProfessor(), // se quiser, depois buscamos o nome aqui
+                    t.getStatus(),
+                    t.getDataInicio() != null ? t.getDataInicio().format(dateFormatter) : "",
+                    t.getDataFim() != null ? t.getDataFim().format(dateFormatter) : "",
+                    t.getDescricao()
+            });
+        }
+
+    } catch (BusinessException e) {
+        JOptionPane.showMessageDialog(this,
+                e.getMessage(),
+                "Erro de validação",
+                JOptionPane.WARNING_MESSAGE);
+    } catch (SQLException e) {
+        logger.log(Level.SEVERE, "Erro ao carregar treinos", e);
+        JOptionPane.showMessageDialog(this,
+                "Erro ao carregar treinos: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    }
+}
+
+private void desativarTreinoSelecionado() {
+    int linha = jTable8.getSelectedRow();
+    if (linha == -1) {
+        JOptionPane.showMessageDialog(this,
+                "Selecione um treino na tabela.",
+                "Aviso",
+                JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    Treino treino = treinosCarregados.get(linha);
+
+    try {
+        treinoNegocio.finalizarTreino(treino.getIdTreino());
+
+        JOptionPane.showMessageDialog(this,
+                "Treino desativado/finalizado com sucesso!",
+                "Sucesso",
+                JOptionPane.INFORMATION_MESSAGE);
+
+        carregarTreinosDoAlunoSelecionado();
+
+    } catch (BusinessException e) {
+        JOptionPane.showMessageDialog(this,
+                e.getMessage(),
+                "Erro de validação",
+                JOptionPane.WARNING_MESSAGE);
+    } catch (SQLException e) {
+        logger.log(Level.SEVERE, "Erro ao desativar treino", e);
+        JOptionPane.showMessageDialog(this,
+                "Erro ao desativar treino: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    }
+}
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCarregarTreinos;
