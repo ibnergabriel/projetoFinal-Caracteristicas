@@ -55,9 +55,10 @@ public class ProfessorNegocioImpl implements ProfessorNegocio, AutoCloseable {
             
             if (dao.findByUsuario(professor.getUsuario()) != null) throw new BusinessException("Usuário já existe.");
 
-            if (!ValidationUtil.isBlank(professor.getSenha())) {
-                professor.setSenha(SecurityUtil.sha256Hex(professor.getSenha()));
+            if (ValidationUtil.isBlank(professor.getSenha())) {
+                throw new BusinessException("Senha obrigatória.");
             }
+
 
             connection.setAutoCommit(false);
             dao.save(professor);

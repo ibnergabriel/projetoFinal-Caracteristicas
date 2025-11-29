@@ -4,27 +4,47 @@
  */
 package com.proyetogrupo.proyetofinal.apresentacao;
 
+import javax.swing.JOptionPane;
+import java.sql.SQLException;
+import java.time.LocalDate;
+
+import com.proyetogrupo.proyetofinal.negocio.ProfessorNegocio;
+import com.proyetogrupo.proyetofinal.negocio.model.Professor;
+import com.proyetogrupo.proyetofinal.negocio.exceptions.BusinessException;
+import com.proyetogrupo.proyetofinal.negocio.dao.ServiceFactory;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import javax.swing.JFileChooser;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+
 
 /**
  *
  * @author pedro
  */
+
+
+
 public class TelaCadastroProfessor extends javax.swing.JFrame {
     
+    
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaCadastroProfessor.class.getName());
-
+    
+    private ProfessorNegocio professorNegocio;
+    
     /**
      * Creates new form TelaCadastroProfessor1
      */
     public TelaCadastroProfessor() {
         initComponents();
+
+        // inicializa o serviço de Professor
+        professorNegocio = ServiceFactory.criarProfessorService();
+
 
         // usamos posição absoluta dentro do DesktopPane
         jDesktopPane1.setLayout(null);
@@ -149,7 +169,7 @@ public class TelaCadastroProfessor extends javax.swing.JFrame {
 
         jLabel9.setText("Fotografia");
 
-        txtProfIdade.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT))));
+        txtProfIdade.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
         txtProfIdade.addActionListener(this::txtProfIdadeActionPerformed);
 
         try {
@@ -182,6 +202,7 @@ public class TelaCadastroProfessor extends javax.swing.JFrame {
 
         btnEntrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Square-Tick@2x.png"))); // NOI18N
         btnEntrar.setText("Confirmar");
+        btnEntrar.addActionListener(this::btnEntrarActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -375,6 +396,12 @@ public class TelaCadastroProfessor extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtProfNome1ActionPerformed
 
+    private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
+        // TODO add your handling code here:
+        salvarProfessor();
+        
+    }//GEN-LAST:event_btnEntrarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -399,6 +426,89 @@ public class TelaCadastroProfessor extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new TelaCadastroProfessor().setVisible(true));
     }
+    
+    private void salvarProfessor() {
+    try {
+        // 1. Ler campos da tela
+        String nome = txtProfNome1.getText().trim();
+        String cref = txtCREF.getText().trim();
+        String email = txtAlunoEmail.getText().trim();
+        String telefone = txtAlunoTelefone.getText().trim();
+        String usuario = txtCadUsuario.getText().trim();
+        String senha = new String(txtCadSenha.getPassword()).trim();
+
+        String sexo = null;
+        if (rbAlunoMasculino.isSelected()) {
+            sexo = "Masculino";
+        } else if (rbAlunoFeminino.isSelected()) {
+            sexo = "Feminino";
+        }
+
+        // Aqui você poderia ler txtProfIdade, mas como o BD de Professor
+        // não tem esse campo, vou ignorar para não quebrar o insert.
+
+        // 2. Montar o objeto Professor
+        Professor professor = new Professor();
+        professor.setNome(nome);
+        professor.setCREF(cref);
+        professor.setSexo(sexo);
+        professor.setTelefone(telefone);
+        professor.setEmail(email);
+        professor.setUsuario(usuario);
+        professor.setSenha(senha);
+        // Data de matrícula: hoje (outra opção é pegar de um campo)
+        professor.setDataMatricula(LocalDate.now());
+
+        // 3. Chamar a camada de negócio
+        professorNegocio.cadastrarProfessor(professor);
+
+        // 4. Avisar usuário e limpar tela
+        JOptionPane.showMessageDialog(this,
+                "Professor cadastrado com sucesso!",
+                "Sucesso",
+                JOptionPane.INFORMATION_MESSAGE);
+
+        limparCampos();
+
+    } catch (BusinessException e) {
+        // Erros de validação/regra de negócio
+        JOptionPane.showMessageDialog(this,
+                e.getMessage(),
+                "Erro de validação",
+                JOptionPane.WARNING_MESSAGE);
+    } catch (SQLException e) {
+        // Erros de banco
+        logger.log(java.util.logging.Level.SEVERE, "Erro ao cadastrar professor", e);
+        JOptionPane.showMessageDialog(this,
+                "Erro ao salvar professor no banco: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    } catch (Exception e) {
+        // Qualquer outra exceção inesperada
+        logger.log(java.util.logging.Level.SEVERE, "Erro inesperado ao cadastrar professor", e);
+        JOptionPane.showMessageDialog(this,
+                "Erro inesperado: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    }
+}
+    private void limparCampos() {
+    txtProfNome1.setText("");
+    txtCREF.setText("");
+    txtAlunoEmail.setText("");
+    txtAlunoTelefone.setText("");
+    txtCadUsuario.setText("");
+    txtCadSenha.setText("");
+    txtProfIdade.setText("");
+
+    rbAlunoMasculino.setSelected(false);
+    rbAlunoFeminino.setSelected(false);
+
+    // Se quiser limpar a foto:
+    paFoto.removeAll();
+    paFoto.repaint();
+}
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btUpload;
