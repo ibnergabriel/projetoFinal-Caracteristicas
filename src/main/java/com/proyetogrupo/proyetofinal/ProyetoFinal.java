@@ -5,9 +5,11 @@
 package com.proyetogrupo.proyetofinal;
 
 import com.proyetogrupo.proyetofinal.negocio.dao.ServiceFactory;
-import com.proyetogrupo.proyetofinal.negocio.impl.AlunoNegocioImpl;
+import com.proyetogrupo.proyetofinal.negocio.impl.ProfessorNegocioImpl;
 import com.proyetogrupo.proyetofinal.negocio.model.Aluno;
+import com.proyetogrupo.proyetofinal.negocio.model.Professor;
 import com.proyetogrupo.proyetofinal.persistencia.DB;
+import java.time.LocalDate;
 
 /**
  *
@@ -28,14 +30,20 @@ public class ProyetoFinal {
         } 
         
         // O try-with-resources garante que o service.close() seja chamado no final
-        try (AlunoNegocioImpl alunoService = ServiceFactory.criarAlunoService()) {
+        try (ProfessorNegocioImpl professorService = ServiceFactory.criarProfessorService()){
             
-            Aluno novo = new Aluno();
-            novo.setNome("Teste");
+            Professor primeiroProf = new Professor();
+            primeiroProf.setNome("Giomar Proyeto Sequeiros");
+            primeiroProf.setCREF("12345-G/PS");
+            primeiroProf.setEmail("giomar@eng.uerj.br");
+            primeiroProf.setSenha("Proyeto#2025");
+            primeiroProf.setTelefone("4002-8922");
+            primeiroProf.setSexo("M");
+            primeiroProf.setUsuario("giomarokay");
             // ... setar dados ...
             
             // Isso vai validar, abrir transação, salvar e commitar (ou rollback)
-            alunoService.cadastrarAluno(novo); 
+            professorService.cadastrarProfessor(primeiroProf); 
             
             System.out.println("Sucesso!");
 

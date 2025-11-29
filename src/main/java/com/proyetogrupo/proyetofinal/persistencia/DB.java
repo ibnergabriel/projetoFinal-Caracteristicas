@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.proyetogrupo.proyetofinal.persistencia;
 
 import java.io.FileInputStream;
@@ -14,19 +10,17 @@ import java.util.Properties;
  * @author ibner
  */
 public class DB {
-    
+
     private static Connection connection = null;
-    
+
     public static Connection getConnection(){
         if(connection == null){
             try{
                 Properties props = loadProperties();
                 String url = props.getProperty("dburl");
-                // Pega usuário e senha
-                String user = props.getProperty("user"); 
+                String user = props.getProperty("user");
                 String password = props.getProperty("password");
-                
-                // Estabelece a conexão com URL, Usuário e Senha
+
                 connection = DriverManager.getConnection(url, user, password);
             }
             catch (SQLException e){
@@ -85,64 +79,107 @@ public class DB {
 
     // --- NOVO MÉTODO PARA CRIAR TABELAS AUTOMATICAMENTE ---
     public static void inicializarBanco() {
+        Connection conn = null;
         Statement st = null;
+
+        // NOTE: aqui usamos utf8mb4_0900_ai_ci, que é a collation do seu servidor (MySQL 8 em Ubuntu)
+        String collate = "utf8mb4_0900_ai_ci";
+
+        String sqlAluno =
+            "CREATE TABLE IF NOT EXISTS Aluno ("
+          + " idAluno VARCHAR(14) CHARACTER SET utf8mb4 COLLATE " + collate + " NOT NULL, "
+          + " nome VARCHAR(100) CHARACTER SET utf8mb4 COLLATE " + collate + ", "
+          + " idade INT, "
+          + " sexo VARCHAR(100) CHARACTER SET utf8mb4 COLLATE " + collate + ", "
+          + " telefone VARCHAR(20) CHARACTER SET utf8mb4 COLLATE " + collate + ", "
+          + " email VARCHAR(100) CHARACTER SET utf8mb4 COLLATE " + collate + ", "
+          + " data_matricula DATE, "
+          + " PRIMARY KEY (idAluno)"
+          + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=" + collate + ";";
+
+        String sqlProfessor =
+            "CREATE TABLE IF NOT EXISTS Professor ("
+          + " idProfessor INT PRIMARY KEY AUTO_INCREMENT, "
+          + " nome VARCHAR(100) CHARACTER SET utf8mb4 COLLATE " + collate + ", "
+          + " CREF VARCHAR(50) CHARACTER SET utf8mb4 COLLATE " + collate + ", "
+          + " sexo VARCHAR(100) CHARACTER SET utf8mb4 COLLATE " + collate + ", "
+          + " telefone VARCHAR(20) CHARACTER SET utf8mb4 COLLATE " + collate + ", "
+          + " email VARCHAR(100) CHARACTER SET utf8mb4 COLLATE " + collate + ", "
+          + " data_matricula DATE, "
+          + " usuario VARCHAR(50) CHARACTER SET utf8mb4 COLLATE " + collate + ", "
+          + " senha VARCHAR(100) CHARACTER SET utf8mb4 COLLATE " + collate
+          + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=" + collate + ";";
+
+        String sqlTreino =
+            "CREATE TABLE IF NOT EXISTS Treino ("
+          + " idTreino INT PRIMARY KEY AUTO_INCREMENT, "
+          + " idAluno VARCHAR(14) CHARACTER SET utf8mb4 COLLATE " + collate + " NOT NULL, "
+          + " idProfessor INT NOT NULL, "
+          + " status VARCHAR(100) CHARACTER SET utf8mb4 COLLATE " + collate + ", "
+          + " descricao VARCHAR(100) CHARACTER SET utf8mb4 COLLATE " + collate + ", "
+          + " data_inicio DATE, "
+          + " data_fim DATE, "
+          + " CONSTRAINT fk_treino_aluno FOREIGN KEY (idAluno) REFERENCES Aluno(idAluno), "
+          + " CONSTRAINT fk_treino_professor FOREIGN KEY (idProfessor) REFERENCES Professor(idProfessor)"
+          + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=" + collate + ";";
+
+        String sqlPagamento =
+            "CREATE TABLE IF NOT EXISTS Pagamento ("
+          + " idPagamento INT PRIMARY KEY AUTO_INCREMENT, "
+          + " idAluno VARCHAR(14) CHARACTER SET utf8mb4 COLLATE " + collate + " NOT NULL, "
+          + " data_pagamento DATE, "
+          + " valor DECIMAL(10, 2), "
+          + " CONSTRAINT fk_pagamento_aluno FOREIGN KEY (idAluno) REFERENCES Aluno(idAluno)"
+          + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=" + collate + ";";
+
         try {
-            Connection conn = getConnection();
+            conn = getConnection();
             st = conn.createStatement();
-            
-            // Tabela Aluno
-            st.execute("CREATE TABLE IF NOT EXISTS Aluno ("
-                    + "idAluno VARCHAR(14), "
-                    + "nome VARCHAR(100), "
-                    + "idade INT, "
-                    + "sexo VARCHAR(100), "
-                    + "telefone VARCHAR(20), "
-                    + "email VARCHAR(100), "
-                    + "data_matricula DATE"
-                    + ")");
 
-            // Tabela Professor
-            st.execute("CREATE TABLE IF NOT EXISTS Professor ("
-                    + "idProfessor INT PRIMARY KEY AUTO_INCREMENT, "
-                    + "nome VARCHAR(100), "
-                    + "CREF VARCHAR(50), "
-                    + "sexo VARCHAR(100), "
-                    + "telefone VARCHAR(20), "
-                    + "email VARCHAR(100), "
-                    + "data_matricula DATE, "
-                    + "usuario VARCHAR(50), "
-                    + "senha VARCHAR(100)"
-                    + ")");
+            // cria a tabela referenciada primeiro
+            st.execute(sqlAluno);
 
-            // Tabela Treino (Depende de Aluno e Professor)
-            st.execute("CREATE TABLE IF NOT EXISTS Treino ("
-                    + "idTreino INT PRIMARY KEY AUTO_INCREMENT, "
-                    + "idAluno VARCHAR(14) NOT NULL, "
-                    + "idProfessor INT NOT NULL, "
-                    + "status VARCHAR(100), "
-                    + "descricao VARCHAR(100), "
-                    + "data_inicio DATE, "
-                    + "data_fim DATE, "
-                    + "CONSTRAINT fk_treino_aluno FOREIGN KEY (idAluno) REFERENCES Aluno(idAluno), "
-                    + "CONSTRAINT fk_treino_professor FOREIGN KEY (idProfessor) REFERENCES Professor(idProfessor)"
-                    + ")");
+            // criar as demais tabelas
+            st.execute(sqlProfessor);
+            st.execute(sqlTreino);
+            st.execute(sqlPagamento);
 
-            // Tabela Pagamento (Depende de Aluno)
-            st.execute("CREATE TABLE IF NOT EXISTS Pagamento ("
-                    + "idPagamento INT PRIMARY KEY AUTO_INCREMENT, "
-                    + "idAluno VARCHAR(14) NOT NULL, "
-                    + "data_pagamento DATE, "
-                    + "valor DECIMAL(10, 2), "
-                    + "CONSTRAINT fk_pagamento_aluno FOREIGN KEY (idAluno) REFERENCES Aluno(idAluno)"
-                    + ")");
-            
             System.out.println("Banco de dados verificado/criado com sucesso!");
-
         } catch (SQLException e) {
+            // diagnóstico detalhado
+            System.err.println("SQLException message: " + e.getMessage());
+            System.err.println("SQLState: " + e.getSQLState());
+            System.err.println("ErrorCode: " + e.getErrorCode());
+            e.printStackTrace();
+
+            // tenta coletar infos do servidor (charset/collation/version)
+            Statement infoSt = null;
+            ResultSet rs = null;
+            try {
+                Connection connInfo = (conn != null) ? conn : getConnection();
+                infoSt = connInfo.createStatement();
+
+                rs = infoSt.executeQuery("SHOW VARIABLES LIKE 'character_set_database'");
+                while (rs.next()) System.err.println(rs.getString(1) + " = " + rs.getString(2));
+                closeResultSet(rs);
+
+                rs = infoSt.executeQuery("SHOW VARIABLES LIKE 'collation_database'");
+                while (rs.next()) System.err.println(rs.getString(1) + " = " + rs.getString(2));
+                closeResultSet(rs);
+
+                rs = infoSt.executeQuery("SELECT VERSION()");
+                while (rs.next()) System.err.println("Server version = " + rs.getString(1));
+                closeResultSet(rs);
+            } catch (SQLException ex2) {
+                System.err.println("Erro ao obter variáveis do servidor: " + ex2.getMessage());
+            } finally {
+                closeStatement(infoSt);
+                closeResultSet(rs);
+            }
+
             throw new DBException("Erro ao inicializar tabelas: " + e.getMessage());
         } finally {
             closeStatement(st);
         }
     }
-    
 }
