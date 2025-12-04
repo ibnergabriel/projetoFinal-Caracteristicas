@@ -113,7 +113,7 @@ public class TelaCadastroAluno extends javax.swing.JFrame {
         }
         txtAlunoCPF.addActionListener(this::txtAlunoCPFActionPerformed);
 
-        txtAlunoIdade.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT))));
+        txtAlunoIdade.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
         txtAlunoIdade.addActionListener(this::txtAlunoIdadeActionPerformed);
 
         try {
