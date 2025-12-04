@@ -31,9 +31,7 @@ public class TreinoNegocioImpl implements TreinoNegocio, AutoCloseable {
         this.connection = connection;
     }
 
-    // ============================================================
-    // MÉTODOS EXIGIDOS PELA INTERFACE TreinoNegocio
-    // ============================================================
+
 
     @Override
     public Treino criarTreino(Treino treino) throws SQLException {
@@ -138,9 +136,7 @@ public class TreinoNegocioImpl implements TreinoNegocio, AutoCloseable {
         return treinoDAO.listByProfessor(idProfessor);
     }
 
-    // ============================================================
-    // VALIDAÇÃO
-    // ============================================================
+
 
     private void validarTreino(Treino treino) throws BusinessException {
         if (treino == null) {
@@ -160,9 +156,7 @@ public class TreinoNegocioImpl implements TreinoNegocio, AutoCloseable {
         }
     }
 
-    // ============================================================
-    // AutoCloseable
-    // ============================================================
+
 
     @Override
     public void close() throws Exception {

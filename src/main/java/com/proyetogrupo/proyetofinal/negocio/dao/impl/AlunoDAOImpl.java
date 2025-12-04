@@ -11,7 +11,7 @@ public class AlunoDAOImpl implements AlunoDAO {
 
     private final Connection connection;
 
-    // CONSTRUTOR PARA INJEÇÃO DE DEPENDÊNCIA
+
     public AlunoDAOImpl(Connection connection) {
         this.connection = connection;
     }
@@ -38,29 +38,29 @@ public class AlunoDAOImpl implements AlunoDAO {
 
         try (PreparedStatement st = this.connection.prepareStatement(sql)) {
 
-            // 1 - CPF = idAluno
+
             st.setString(1, a.getIdAluno());
 
-            // 2 - Nome
+
             st.setString(2, a.getNome());
 
-            // 3 - Idade (pode ser null)
+
             if (a.getIdade() != null) {
                 st.setInt(3, a.getIdade());
             } else {
                 st.setNull(3, Types.INTEGER);
             }
 
-            // 4 - Sexo
+
             st.setString(4, a.getSexo());
 
-            // 5 - Telefone
+
             st.setString(5, a.getTelefone());
 
-            // 6 - Email
+
             st.setString(6, a.getEmail());
 
-            // 7 - Data de matrícula
+
             if (a.getDataMatricula() != null) {
                 st.setDate(7, Date.valueOf(a.getDataMatricula()));
             } else {

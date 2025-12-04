@@ -402,24 +402,23 @@ public class TelaTreinos extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Selecione um aluno.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        String cpfAluno = itemAluno.split(" - ")[0].trim(); // "12345678900 - João" -> "12345678900"
+        String cpfAluno = itemAluno.split(" - ")[0].trim(); 
 
-        // 2. Pega id do professor selecionado
+        
         String itemProfessor = (String) comboProfessor22.getSelectedItem();
         if (itemProfessor == null || itemProfessor.isBlank()) {
             JOptionPane.showMessageDialog(this, "Selecione um professor.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        int idProfessor = Integer.parseInt(itemProfessor.split(" - ")[0].trim()); // "1 - Giomar" -> 1
+        int idProfessor = Integer.parseInt(itemProfessor.split(" - ")[0].trim()); 
 
-        // 3. Demais campos
+        
         String descricao = txtDescricao22.getText().trim();
-        String statusSelecionado = (String) jComboBox23.getSelectedItem(); // "Ativo"/"Inativo" (negócio depois força "ATIVO")
-
+        String statusSelecionado = (String) jComboBox23.getSelectedItem(); 
         LocalDate dataInicio = parseData(txtDataInicio22.getText());
         LocalDate dataFim = parseData(txtDataFim22.getText());
 
-        // 4. Monta objeto Treino
+        
         Treino treino = new Treino();
         treino.setIdAluno(cpfAluno);        // CPF do aluno (String)
         treino.setIdProfessor(idProfessor); // id numérico do professor
@@ -428,7 +427,7 @@ public class TelaTreinos extends javax.swing.JFrame {
         treino.setDataInicio(dataInicio);
         treino.setDataFim(dataFim);
 
-        // 5. Chama camada de negócio
+        
         treinoNegocio.criarTreino(treino);
 
         JOptionPane.showMessageDialog(this,

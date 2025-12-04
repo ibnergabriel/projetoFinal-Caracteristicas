@@ -34,10 +34,8 @@ public class TelaTreinosAtivos extends javax.swing.JFrame {
      */
     public TelaTreinosAtivos() {
         initComponents();
-            // cria o serviço de Treino usando a ServiceFactory (camada de negócio)
         this.treinoNegocio = ServiceFactory.criarTreinoService();
 
-        // limpa as linhas padrão criadas pelo NetBeans na tabela
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
 
@@ -214,7 +212,7 @@ public class TelaTreinosAtivos extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> new TelaTreinosAtivos().setVisible(true));
     }
     
-     // -------------------- MÉTODOS AUXILIARES ------------------------
+
 
     private void carregarAlunosNoCombo() {
         try {
@@ -231,7 +229,6 @@ public class TelaTreinosAtivos extends javax.swing.JFrame {
             for (Aluno a : alunos) {
                 // idAluno é o CPF (VARCHAR(14))
                 model.addElement(a.getIdAluno());
-                // Se quiser: model.addElement(a.getIdAluno() + " - " + a.getNome());
             }
 
             jComboBox1.setModel(model);

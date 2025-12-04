@@ -218,7 +218,7 @@ public class TelaTreinosInativos extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> new TelaTreinosInativos().setVisible(true));
     }
     
-        // -------------------- MÉTODOS AUXILIARES ------------------------
+
 
     private void carregarAlunosNoCombo() {
         try {
@@ -235,7 +235,6 @@ public class TelaTreinosInativos extends javax.swing.JFrame {
             for (Aluno a : alunos) {
                 // idAluno é o CPF (VARCHAR(14))
                 model.addElement(a.getIdAluno());
-                // Se quiser: model.addElement(a.getIdAluno() + " - " + a.getNome());
             }
 
             jComboBox1.setModel(model);

@@ -244,29 +244,29 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void btnTreinosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTreinosActionPerformed
         // TODO add your handling code here:
-        TelaTreinos tela = new TelaTreinos(); // cria a nova janela
-        tela.setLocationRelativeTo(null);           // centraliza
+        TelaTreinos tela = new TelaTreinos(); 
+        tela.setLocationRelativeTo(null);           
         tela.setVisible(true);
     }//GEN-LAST:event_btnTreinosActionPerformed
 
     private void menuItemAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAlunoActionPerformed
         // TODO add your handling code here:
-        TelaCadastroAluno aluno = new TelaCadastroAluno(); // cria a nova janela
-        aluno.setLocationRelativeTo(null);           // centraliza
+        TelaCadastroAluno aluno = new TelaCadastroAluno(); 
+        aluno.setLocationRelativeTo(null);           
         aluno.setVisible(true);
     }//GEN-LAST:event_menuItemAlunoActionPerformed
 
     private void menuItemProfessorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemProfessorActionPerformed
         // TODO add your handling code here:
-        TelaCadastroProfessor tela = new TelaCadastroProfessor(); // cria a nova janela
-        tela.setLocationRelativeTo(null);           // centraliza
+        TelaCadastroProfessor tela = new TelaCadastroProfessor(); 
+        tela.setLocationRelativeTo(null);           
         tela.setVisible(true);
     }//GEN-LAST:event_menuItemProfessorActionPerformed
 
     private void menuItemTreinosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTreinosActionPerformed
         // TODO add your handling code here:
-        TelaTreinos tela = new TelaTreinos(); // cria a nova janela
-        tela.setLocationRelativeTo(null);           // centraliza
+        TelaTreinos tela = new TelaTreinos(); 
+        tela.setLocationRelativeTo(null);           
         tela.setVisible(true);
     }//GEN-LAST:event_menuItemTreinosActionPerformed
 

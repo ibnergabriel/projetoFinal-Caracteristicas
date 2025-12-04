@@ -11,8 +11,7 @@ public class ProfessorDAOImpl implements ProfessorDAO {
 
     private final Connection connection;
 
-    // CONSTRUTOR DE INJEÇÃO
-    // Recebe a conexão pronta. Não abre nem fecha a conexão aqui.
+
     public ProfessorDAOImpl(Connection connection) {
         this.connection = connection;
     }

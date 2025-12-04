@@ -29,9 +29,7 @@ public class AlunoNegocioImpl implements AlunoNegocio, AutoCloseable {
         this.connection = connection;
     }
 
-    // =======================
-    // MÉTODOS DA INTERFACE
-    // =======================
+
 
     @Override
     public Optional<Aluno> buscarPorId(String cpf) throws SQLException {
@@ -87,9 +85,7 @@ public class AlunoNegocioImpl implements AlunoNegocio, AutoCloseable {
         alunoDAO.deleteById(cpf);
     }
 
-    // =======================
-    // SUPORTE / VALIDAÇÃO
-    // =======================
+
 
     private void validarAluno(Aluno aluno, boolean novo) {
         if (aluno == null) {
@@ -109,7 +105,7 @@ public class AlunoNegocioImpl implements AlunoNegocio, AutoCloseable {
             throw new BusinessException("E-mail do aluno é inválido.");
         }
 
-        // aqui você pode colocar mais validações (idade, telefone, etc) se quiser
+
     }
 
     @Override

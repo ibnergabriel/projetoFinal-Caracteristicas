@@ -18,9 +18,9 @@ public interface TreinoNegocio {
     void finalizarTreino(int id) throws SQLException;
     Optional<Treino> buscarPorId(int id) throws SQLException;
 
-    // aqui é o CPF do aluno (String)
+
     List<Treino> listarPorAluno(String cpfAluno) throws SQLException;
 
-    // professor continua com id numérico
+
     List<Treino> listarPorProfessor(int idProfessor) throws SQLException;
 }

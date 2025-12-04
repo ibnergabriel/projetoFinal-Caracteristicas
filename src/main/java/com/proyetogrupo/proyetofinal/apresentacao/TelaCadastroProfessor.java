@@ -66,7 +66,7 @@ public class TelaCadastroProfessor extends javax.swing.JFrame {
     int gapTopo = 20;              // margem superior
     int gapEntreTituloPainel = 20; // espaço entre o título e os painéis
 
-    // tamanhos preferidos dos componentes
+
     java.awt.Dimension dTitulo = jLabel1.getPreferredSize();
     java.awt.Dimension d1 = jPanel1.getPreferredSize();
     java.awt.Dimension d2 = jPanel2.getPreferredSize();
@@ -74,7 +74,7 @@ public class TelaCadastroProfessor extends javax.swing.JFrame {
     int totalWidth = d1.width + gapHorizontal + d2.width;
     int larguraDesktop = jDesktopPane1.getWidth();
 
-    // x de início do bloco (do jPanel1)
+
     int xInicio = (larguraDesktop - totalWidth) / 2;
     if (xInicio < 0) xInicio = 0;
 

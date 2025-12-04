@@ -344,7 +344,6 @@ public class TelaCadastroAluno extends javax.swing.JFrame {
 
         // Aqui o CPF AINDA NÃO vai para o banco,
         // porque a tabela/DAO não têm campo cpf.
-        // Dá pra adicionar depois, se quiser.
 
         // Salva no banco
         alunoDAO.save(aluno);
